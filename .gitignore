@@ -1,0 +1,13 @@
+# cache
+.mypy_cache
+.pytest_cache
+.tox
+**/__pycache__
+
+
+# environment
+.env
+
+#requirements
+requirements.txt
+requirements.dev.txt
