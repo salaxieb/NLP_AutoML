@@ -1,10 +1,10 @@
 include .env
 
 lint:
-	@poetry run mypy ds_template
-	@poetry run pylint ds_template
-	@poetry run flake8 ds_template
-	@poetry run black ds_template --check
+	@poetry run mypy nlp_automl
+	@poetry run pylint nlp_automl
+	@poetry run flake8 nlp_automl
+	@poetry run black nlp_automl --check
 
 
 test:
