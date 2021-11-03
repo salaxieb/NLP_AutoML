@@ -1,5 +1,5 @@
-## Library for text -> label prediction
-choosing **preprocessing**, **vecotorizer**, **model** with optuna
+## Library for text -> label task baseline search
+choosing **preprocesser**, **vecotorizer**, **model** with optuna
 
 ### Demo
 examples/intent_prediction.py
@@ -13,7 +13,7 @@ poetry install --no-dev
 
 ### Dev commands
 ```bash
-poetry unstall
+poetry install
 make lint  # runs linter checkers
 make test  # runs test in current python version
 make tox  # runs tests in specified python versions
