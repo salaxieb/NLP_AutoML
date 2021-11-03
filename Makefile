@@ -10,7 +10,7 @@ test:
 	@poetry run pytest -s
 
 
-tox:
+tox: requirements
 	@poetry run tox
 
 
