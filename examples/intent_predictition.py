@@ -8,7 +8,13 @@ from pathlib import Path
 from sklearn.metrics import accuracy_score
 
 
-sys.path.append(str(Path(os.path.abspath(__file__)).parent.parent))
+sys.path.append(
+    os.path.dirname(
+        os.path.dirname(
+            os.path.abspath(__file__)
+        )
+    )
+)
 
 from nlp_automl.auto_ml_pipeline import AutoMLPipeline
 

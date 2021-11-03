@@ -19,7 +19,7 @@ setup(
     author_email='salaxieb.ildar@gmail.com',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=['ds_template']),
+    packages=find_packages(include=['nlp_automl']),
     include_package_data=True,
     install_requires=requirements('requirements.txt'),
     extras_require={'dev': requirements('requirements.dev.txt')},
