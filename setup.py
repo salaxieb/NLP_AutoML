@@ -1,5 +1,7 @@
+import pkg_resources
 from setuptools import setup, find_packages
 
+import pathlib
 
 with open("Readme_pypi.md", "r") as fh:
     long_description = fh.read()
@@ -14,7 +16,7 @@ def requirements(filepath: str):
 setup(
     name='NLP AutoML',
     version='0.0',
-    description='AutoML library for solving only text -> label task',
+    description='AutoML library for solving text -> label task',
     author="salaxieb",
     author_email='salaxieb.ildar@gmail.com',
     long_description=long_description,

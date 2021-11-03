@@ -19,3 +19,8 @@ requirements.dev.txt
 #bin
 *.bin
 *.bin.gz
+
+
+# library data
+dist
+*.egg-info
