@@ -1,14 +1,13 @@
 include .env
 
 lint:
+	@poetry run black nlp_automl
 	@poetry run mypy nlp_automl
 	@poetry run pylint nlp_automl
-	@poetry run flake8 nlp_automl
-	@poetry run black nlp_automl --check
 
 
 test:
-	@poetry run pytest
+	@poetry run pytest -s
 
 
 tox:

@@ -8,6 +8,14 @@
 # environment
 .env
 
-#requirements
+#requirements (make requirements for generating_
 requirements.txt
 requirements.dev.txt
+
+
+#logs
+*.log
+
+#bin
+*.bin
+*.bin.gz
