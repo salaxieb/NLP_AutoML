@@ -22,5 +22,6 @@ clean:
 	@rm -rf .tox
 	@rm -rf .pytest_cache
 	@rm -rf dist
+	@rm -rf build
 	@rm -rf NLP_AutoML.egg-info
 	@find . -type d -name __pycache__ -prune -exec rm -rf {} \;

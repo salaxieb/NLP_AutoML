@@ -15,13 +15,16 @@ def requirements(filepath: str):
 
 setup(
     name='NLP AutoML',
-    version='0.1',
+    version='0.2',
     description='AutoML library for solving text -> label task',
     author="salaxieb",
     author_email='salaxieb.ildar@gmail.com',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=['nlp_automl']),
+    packages=find_packages(exclude=[
+        'tests',
+        'examples',
+    ]),
     include_package_data=True,
     install_requires=requirements('requirements.txt'),
     extras_require={'dev': requirements('requirements.dev.txt')},
