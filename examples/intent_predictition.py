@@ -30,17 +30,18 @@ def get_word_vector_cc_bin(token):
     return ft.get_word_vector(token)
 
 
-config = {
-    'text_column': 'description',
-    'target_column': 'user_type',
-    'dataset': dataset,
-    'use_label_encoder': True,  # optional
-    'evaluator': accuracy_score,
-
+task = {
+    'text_column': 'description',  # required
+    'target_column': 'user_type',  # required
+    'dataset': dataset,  # required
+    'use_label_encoder': True,  # Optional, default: True
+    'evaluator': accuracy_score,  # required
+    'fit_pipeline': True, # Optional, default: True
+}
+auto_ml_config = {
     'fast_text_vectorizer': { # token vectorizers, optional
         'cc.ru.300.bin': get_word_vector_cc_bin  # callable
     },
-
     # vectorizers # optional, default: True
     'use_count_vect': True,
     'use_tf_idf': True,
@@ -52,14 +53,16 @@ config = {
     'use_stemmer': True,
 
     # models # optional, default: True
-    'use_boosting': True,
+    'use_boosting': False,
     'use_logreg': True,
     'use_rand_forest': True,
 }
 
-automl = AutoMLPipeline(config=config)
-best_params, pipeline = automl.find_solution(timeout=200)
+
+automl = AutoMLPipeline(config=auto_ml_config)
+best_params, pipeline = automl.find_solution(task=task, timeout=200)
 preprocessor, vectorizer, model = pipeline
+
 
 # usage
 my_text = 'Здарова, бандиты!'

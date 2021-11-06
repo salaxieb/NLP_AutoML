@@ -1,12 +1,10 @@
-include .env
-
-lint:
+lint: clean
 	@poetry run black nlp_automl
 	@poetry run mypy nlp_automl
 	@poetry run pylint nlp_automl
 
 
-test:
+test: clean
 	@poetry run pytest -s
 
 
@@ -23,3 +21,6 @@ clean:
 	@rm -rf .mypy_cache
 	@rm -rf .tox
 	@rm -rf .pytest_cache
+	@rm -rf dist
+	@rm -rf NLP_AutoML.egg-info
+	@find . -type d -name __pycache__ -prune -exec rm -rf {} \;

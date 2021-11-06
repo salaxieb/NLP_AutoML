@@ -39,31 +39,9 @@ class AutoMLPipeline:
                 'dataset': pd.DataFrame,
                 }
         """
-        df_train, df_test = train_test_split(
-            config.get("dataset"),
-            test_size=0.2,
-            random_state=42,
-            shuffle=True,
-        )
-        if config.get("use_label_encoder", True):
-            label_encoder = LabelEncoder()
-            targets_train: np.ndarray = label_encoder.fit_transform(
-                df_train[config["target_column"]].values
-            )
-            targets_test: np.ndarray = label_encoder.transform(
-                df_test[config["target_column"]].values
-            )
-            logger.info(f"label encoder classes_ {label_encoder.classes_}")
-        else:
-            targets_train = df_train[config["target_column"]].values
-            targets_test = df_test[config["target_column"]].values
-
-        self.dataset = Dataset(
-            texts_train=df_train[config["text_column"]].values,
-            texts_test=df_test[config["text_column"]].values,
-            targets_train=targets_train,
-            targets_test=targets_test,
-        )
+        self.evaluator: Callable
+        self.dataset: Dataset
+        self.fit_pipeline: bool
 
         self.preprocessors: Dict[str, Type[Preprocessor]] = {}
         if config.get("use_basic", True):
@@ -91,10 +69,37 @@ class AutoMLPipeline:
         if config.get("use_rand_forest", True):
             self.models.update({"rand_forest": RandomForest})
 
-        self.evaluator = config["evaluator"]
-
-    def find_solution(self, timeout: int = 3600) -> Tuple[Dict[str, Any], Any]:
+    def find_solution(
+        self, task: Dict[str, Any], timeout: int = 3600
+    ) -> Tuple[Dict[str, Any], Any]:
         """Main method to search solution for Initialized automl object."""
+        self.evaluator = task["evaluator"]
+        self.fit_pipeline = task.get("fit_pipeline", True)
+        df_train, df_test = train_test_split(
+            task["dataset"],
+            test_size=0.2,
+            random_state=42,
+            shuffle=True,
+        )
+        if task.get("use_label_encoder", True):
+            label_encoder = LabelEncoder()
+            targets_train: np.ndarray = label_encoder.fit_transform(
+                df_train[task["target_column"]].values
+            )
+            targets_test: np.ndarray = label_encoder.transform(
+                df_test[task["target_column"]].values
+            )
+            logger.info(f"label encoder classes_ {label_encoder.classes_}")
+        else:
+            targets_train = df_train[task["target_column"]].values
+            targets_test = df_test[task["target_column"]].values
+
+        self.dataset = Dataset(
+            texts_train=df_train[task["text_column"]].values,
+            texts_test=df_test[task["text_column"]].values,
+            targets_train=targets_train,
+            targets_test=targets_test,
+        )
         study = optuna.create_study(direction="maximize")
         study.optimize(self.one_optuna_run, timeout=timeout)
         return study.best_params, self.give_pipeline(study.best_params)
@@ -135,8 +140,11 @@ class AutoMLPipeline:
 
         logger.debug("model fit")
         model.fit(vectors_train, self.dataset.targets_train)
+        predicts_train = model.predict(vectors_train)
 
-        score_test, score_train = self.evaluate(preprocessor, vectorizer, model)
+        score_test, score_train = self.evaluate(
+            predicts_train, preprocessor, vectorizer, model
+        )
         logger.info(
             f"""
             {str(preprocessor)}
@@ -154,22 +162,26 @@ class AutoMLPipeline:
             hyperparams=hyperparams
         )
         if hyperparams["vectorizer"] == "fast_text":
-            hyperparams = {
-                "token_embedder": self.fast_text_vectorizers[
-                    hyperparams["fast_text_vectorizer"]
-                ]
-            }
+            hyperparams.update(
+                {
+                    "token_embedder": self.fast_text_vectorizers[
+                        hyperparams["fast_text_vectorizer"]
+                    ]
+                }
+            )
         vectorizer = self.vectorizers[hyperparams["vectorizer"]](
             hyperparams=hyperparams
         )
         model = self.models[hyperparams["model"]](hyperparams=hyperparams)
-        preprocessed = preprocessor.preprocess(self.dataset.texts_train)
-        vectorized = vectorizer.fit_transform(preprocessed)
-        model.fit(vectorized, self.dataset.targets_train)
+        if self.fit_pipeline:
+            preprocessed = preprocessor.preprocess(self.dataset.texts_train)
+            vectorized = vectorizer.fit_transform(preprocessed)
+            model.fit(vectorized, self.dataset.targets_train)
         return (preprocessor, vectorizer, model)
 
     def evaluate(
         self,
+        predicts_train: np.ndarray,
         preprocessor: Preprocessor,
         vectorizer: Vectorizer,
         model: MlMethod,
@@ -177,10 +189,6 @@ class AutoMLPipeline:
         preprocessed_test = preprocessor.preprocess(self.dataset.texts_test)
         vectors_test = vectorizer.transform(preprocessed_test)
         predicts_test = model.predict(vectors_test)
-
-        preprocessed_train = preprocessor.preprocess(self.dataset.texts_train)
-        vectors_train = vectorizer.transform(preprocessed_train)
-        predicts_train = model.predict(vectors_train)
         return (
             self.evaluator(self.dataset.targets_test, predicts_test),
             self.evaluator(self.dataset.targets_train, predicts_train),
