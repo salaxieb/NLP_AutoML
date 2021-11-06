@@ -48,7 +48,7 @@ def test_something(dataset):
         'use_stemmer': True,
 
         # models # optional, default: True
-        'use_boosting': True,
+        'use_boosting': False,
         'use_logreg': True,
         'use_rand_forest': True,
     }
@@ -56,5 +56,9 @@ def test_something(dataset):
     automl = AutoMLPipeline(config=auto_ml_config)
     best_params, pipeline = automl.find_solution(task=task, timeout=20)
     preprocessor, vectorizer, model = pipeline
+    
+    preprocessed = preprocessor.preprocess(sub_dataset[text_column])
+    vectors = vectorizer.transform(preprocessed)
+    predict = model.predict(vectors)
 
     assert 0.5 < accuracy_score(sub_dataset[target_column], predict) < 0.75
