@@ -16,7 +16,7 @@ sys.path.append(
     )
 )
 
-from nlp_automl.auto_ml_pipeline import AutoMLPipeline
+from nlp_automl import AutoMLPipeline
 
 fasttext.util.download_model('ru', if_exists='ignore')
 ft = fasttext.load_model('cc.ru.300.bin')

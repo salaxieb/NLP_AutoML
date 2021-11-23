@@ -1,18 +1,12 @@
 import pytest
 import pandas as pd
 from sklearn.metrics import accuracy_score
-from nlp_automl.auto_ml_pipeline import AutoMLPipeline
+from nlp_automl import AutoMLPipeline
 import fasttext.util
 from sklearn.preprocessing import LabelEncoder
 
 
 def test_something(dataset):
-    # fasttext.util.download_model('ru', if_exists='ignore')
-    # ft = fasttext.load_model('cc.ru.300.bin')
-
-    # def get_word_vector_cc_bin(token):
-    #     return ft.get_word_vector(token)
-
     target_column = 'user_type'
     text_column = 'description'
 
@@ -33,10 +27,6 @@ def test_something(dataset):
         'fit_pipeline': True, # Optional, default: True
     }
     auto_ml_config = {
-        'fast_text_vectorizer': { # token vectorizers, optional
-            # 'cc.ru.300.bin': get_word_vector_cc_bin  # callable
-        },
-
         # vectorizers # optional, default: True
         'use_count_vect': True,
         'use_tf_idf': True,

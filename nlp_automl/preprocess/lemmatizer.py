@@ -35,12 +35,13 @@ class Lemmatizer(Preprocessor):
         return self.default_config(hyperparams)
 
     def preprocess_one(self, message: str) -> str:
-        tokens = self.mystem.lemmatize(message.lower())
+        message = message.lower().strip()
         tokens = [
             token
-            for token in tokens
+            for token in message.split()
             if token not in self.stopwords and token.strip() not in punctuation
         ]
+        tokens = self.mystem.lemmatize(message.lower())
         return " ".join(tokens)
 
     def preprocess(self, messages: List[str]) -> List[str]:

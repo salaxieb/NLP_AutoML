@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Callable, Dict, Tuple, Type
+from typing import Any, Callable, Dict, Optional, Tuple, Type
 
 import numpy as np
 import optuna
@@ -28,7 +28,7 @@ logger = getLogger(__name__)
 class AutoMLPipeline:
     """Main training pipeline."""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initializes class with label names and search space.
         Args:
             config: Dict[str, str
@@ -39,6 +39,7 @@ class AutoMLPipeline:
                 'dataset': pd.DataFrame,
                 }
         """
+        config = config or {}
         self.evaluator: Callable
         self.dataset: Dataset
         self.fit_pipeline: bool

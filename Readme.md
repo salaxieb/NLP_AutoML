@@ -19,3 +19,6 @@ make test  # runs test in current python version
 make tox  # runs tests in specified python versions
 make requirements  # inport poetry requirements to requirements.txt
 ```
+
+### Contribution  
+please, contribute (make forks, branches ...)

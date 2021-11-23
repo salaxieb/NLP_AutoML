@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nlp_automl"
-version = "0.2"
+version = "0.3"
 description = "AutoML library for solving only text -> label task'"
 authors = ["salaxieb <salaxieb.ildar@gmail.com>"]
 

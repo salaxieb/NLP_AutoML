@@ -15,7 +15,7 @@ def requirements(filepath: str):
 
 setup(
     name='NLP AutoML',
-    version='0.2',
+    version='0.3',
     description='AutoML library for solving text -> label task',
     author="salaxieb",
     author_email='salaxieb.ildar@gmail.com',

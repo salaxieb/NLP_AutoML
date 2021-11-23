@@ -26,6 +26,7 @@ class Stemmer(Preprocessor):
 
     def preprocess_one(self, message: str) -> str:
         """Should preprocess message according to config."""
+        message = message.lower()
         return self.stemmer.stem(message)
 
     def preprocess(self, messages: List[str]) -> List[str]:

@@ -8,16 +8,18 @@ use to find baseline in text to label task
 ```python
 from sklearn.metrics import accuracy_score
 
-from nlp_automl.auto_ml_pipeline import AutoMLPipeline
+from nlp_automl import AutoMLPipeline
 
-config = {
-    'text_column': 'message',
-    'target_column': 'intent',
-    'dataset': dataset,
-    'evaluator': accuracy_score,
+task = {
+    'text_column': 'description',  # required
+    'target_column': 'user_type',  # required
+    'dataset': dataset,  # required
+    'use_label_encoder': True,  # Optional, default: True
+    'evaluator': accuracy_score,  # required
+    'fit_pipeline': True, # Optional, default: True
 }
-automl = AutoMLPipeline(config=config)
-best_params, pipeline = automl.find_solution(timeout=200)
+automl = AutoMLPipeline()
+best_params, pipeline = automl.find_solution(task=task, timeout=200)
 preprocessor, vectorizer, model = pipeline
 ```
 More detailed usage example [./examples/intent_prediction.py](https://github.com/salaxieb/NLP_AutoML/blob/master/examples/intent_predictition.py)
