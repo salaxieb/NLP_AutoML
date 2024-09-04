@@ -7,20 +7,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 from nlp_automl.datatypes import Dataset
+from nlp_automl.method.base import MlMethod
+from nlp_automl.method.boosting import Boosting
+from nlp_automl.method.log_reg import LogReg
+from nlp_automl.method.rand_forest import RandomForest
 from nlp_automl.preprocess.base import Preprocessor
 from nlp_automl.preprocess.basic import Basic
 from nlp_automl.preprocess.lemmatizer import Lemmatizer
 from nlp_automl.preprocess.stemmer import Stemmer
-
 from nlp_automl.vectorizer.base import Vectorizer
 from nlp_automl.vectorizer.count import CountVec
 from nlp_automl.vectorizer.fast_text import FastText
 from nlp_automl.vectorizer.tf_idf import TfIdfVectorizer
-
-from nlp_automl.method.base import MlMethod
-from nlp_automl.method.log_reg import LogReg
-from nlp_automl.method.boosting import Boosting
-from nlp_automl.method.rand_forest import RandomForest
 
 logger = getLogger(__name__)
 
@@ -37,12 +35,13 @@ class AutoMLPipeline:
                 'target_column': 'label',
                 'evaluator': Callable,
                 'dataset': pd.DataFrame,
-                }
+            }
         """
         config = config or {}
         self.evaluator: Callable
         self.dataset: Dataset
         self.fit_pipeline: bool
+        self.label_encoder: Optional[LabelEncoder]
 
         self.preprocessors: Dict[str, Type[Preprocessor]] = {}
         if config.get("use_basic", True):
@@ -72,7 +71,7 @@ class AutoMLPipeline:
 
     def find_solution(
         self, task: Dict[str, Any], timeout: int = 3600
-    ) -> Tuple[Dict[str, Any], Any]:
+    ) -> Tuple[Dict[str, Any], Tuple[Preprocessor, Vectorizer, MlMethod]]:
         """Main method to search solution for Initialized automl object."""
         self.evaluator = task["evaluator"]
         self.fit_pipeline = task.get("fit_pipeline", True)
@@ -82,18 +81,17 @@ class AutoMLPipeline:
             random_state=42,
             shuffle=True,
         )
+        targets_train: np.ndarray = df_train[task["target_column"]].values
+        targets_test: np.ndarray = df_test[task["target_column"]].values
         if task.get("use_label_encoder", True):
-            label_encoder = LabelEncoder()
-            targets_train: np.ndarray = label_encoder.fit_transform(
+            self.label_encoder = LabelEncoder()
+            targets_train = self.label_encoder.fit_transform(
                 df_train[task["target_column"]].values
             )
-            targets_test: np.ndarray = label_encoder.transform(
+            targets_test = self.label_encoder.transform(
                 df_test[task["target_column"]].values
             )
-            logger.info(f"label encoder classes_ {label_encoder.classes_}")
-        else:
-            targets_train = df_train[task["target_column"]].values
-            targets_test = df_test[task["target_column"]].values
+            logger.info(f"label encoder classes_ {self.label_encoder.classes_}")
 
         self.dataset = Dataset(
             texts_train=df_train[task["text_column"]].values,

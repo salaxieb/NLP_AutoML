@@ -1,4 +1,5 @@
 import logging
+
 import nltk
 import optuna
 
@@ -11,6 +12,4 @@ optuna.logging.set_verbosity(optuna.logging.DEBUG)
 optuna.logging.enable_propagation()  # Propagate logs to the root logger.
 
 
-__all__ = [
-    'AutoMLPipeline'
-]
+__all__ = ["AutoMLPipeline"]

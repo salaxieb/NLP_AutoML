@@ -11,11 +11,11 @@ from sklearn.metrics import accuracy_score
 from nlp_automl import AutoMLPipeline
 
 task = {
-    'text_column': 'description',  # required
-    'target_column': 'user_type',  # required
-    'dataset': dataset,  # required
+    'text_column': 'description',  # str - required
+    'target_column': 'user_type',  # str - required
+    'dataset': dataset,  # pd.Dataframe - required
     'use_label_encoder': True,  # Optional, default: True
-    'evaluator': accuracy_score,  # required
+    'evaluator': accuracy_score,  # callable, required
     'fit_pipeline': True, # Optional, default: True
 }
 automl = AutoMLPipeline()

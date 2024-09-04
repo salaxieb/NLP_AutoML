@@ -1,5 +1,6 @@
 lint: clean
-	@poetry run black nlp_automl
+	@poetry run black nlp_automl --check
+	@poetry run isort nlp_automl --check-only
 	@poetry run mypy nlp_automl
 	@poetry run pylint nlp_automl
 
@@ -8,8 +9,8 @@ test: clean
 	@poetry run pytest -s
 
 
-tox: requirements
-	@poetry run tox
+tox:
+	@tox
 
 
 requirements:
